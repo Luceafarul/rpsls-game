@@ -2,9 +2,14 @@ package com.example.services
 
 import com.example.domain.Player
 import com.example.domain.Guest
-import cats.effect.IO
+import com.example.store.Store
 
-object PlayerService {
-  def createPlayer(guest: Guest): IO[Player] = 
-    UUIDService.generateId.map(Player(_, guest.name))
+final case class PlayerService(store: Store) {
+  def createPlayer(guest: Guest): Player = {
+    val p = Player(UUIDService.generateId, guest.name)
+    store.add(p)
+    p
+  }
+
+  def allPlayers = store.all
 }

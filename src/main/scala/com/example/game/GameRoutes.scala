@@ -8,9 +8,9 @@ import com.example.domain.Player
 import com.example.domain.Guest
 import com.example.services.PlayerService
 
-object GameRoutes {
-  implicit val playerEncoder = jsonEncoderOf[IO, Player]
-  implicit val playerDecoder = jsonOf[IO, Player]
+final case class GameRoutes(playerService: PlayerService) {
+  implicit val playerEncoder = jsonEncoderOf[IO, List[Player]]
+  implicit val playerDecoder = jsonOf[IO, List[Player]]
   implicit val guestEncoder = jsonEncoderOf[IO, Guest]
   implicit val guestDecoder = jsonOf[IO, Guest]
 
@@ -19,8 +19,15 @@ object GameRoutes {
     case req @ POST -> Root / "lobby" =>
       for {
         guest <- req.as[Guest]
-        player <- PlayerService.createPlayer(guest)
-        resp <- Ok(player)
+        _ = playerService.createPlayer(guest)
+        resp <- Ok(playerService.allPlayers)
       } yield resp
   }
+}
+
+object GameRoutes {
+  implicit val playerEncoder = jsonEncoderOf[IO, List[Player]]
+  implicit val playerDecoder = jsonOf[IO, List[Player]]
+  implicit val guestEncoder = jsonEncoderOf[IO, Guest]
+  implicit val guestDecoder = jsonOf[IO, Guest]
 }

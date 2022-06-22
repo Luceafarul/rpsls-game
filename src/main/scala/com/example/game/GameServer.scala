@@ -8,10 +8,15 @@ import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits._
 import org.http4s.server.middleware.Logger
 import com.example.game.GameRoutes
+import com.example.services.PlayerService
+import com.example.store.Store
 
 object GameServer {
+  // private val store = Store()
+  private val playerService = PlayerService(Store())
+
   val stream: Stream[IO, Nothing] = {
-    val routes = GameRoutes.routes.orNotFound
+    val routes = GameRoutes(playerService).routes.orNotFound
     val httpApp = Logger.httpApp(true, true)(routes)
 
     Stream.resource(
