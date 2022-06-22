@@ -24,10 +24,3 @@ final case class GameRoutes(playerService: PlayerService) {
       } yield resp
   }
 }
-
-object GameRoutes {
-  implicit val playerEncoder = jsonEncoderOf[IO, List[Player]]
-  implicit val playerDecoder = jsonOf[IO, List[Player]]
-  implicit val guestEncoder = jsonEncoderOf[IO, Guest]
-  implicit val guestDecoder = jsonOf[IO, Guest]
-}
